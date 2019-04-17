@@ -15,7 +15,7 @@ idealweight = 110.0
 maxdeviation = 5.0
 if coef > idealweight + maxdeviation
   puts " # { name } , Ваш вес недостаточный. Вам надо набрать  # { coef - idealweight } килограммов"
-elsif coef<idealweight-maxdeviation
+elsif coef < idealweight - maxdeviation
   puts " # { name } , у Bаc лишний вес. Вам надо сбросить # { idealweight - coef } килограммов"
 else
   puts " # { name },  Bаш вес идеально соответствует росту!)))"
