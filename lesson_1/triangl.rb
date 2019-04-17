@@ -4,10 +4,10 @@
 
 
 puts "Введите основание треугольника"
-basis=gets.chomp.to_f
+basis = gets.chomp.to_f
 
 puts "Введите высоту треугольника"
-height=gets.chomp.to_f
+height = gets.chomp.to_f
 
-squaretriangl=0.5*basis*height
+squaretriangl = 0.5 * basis * height
 puts "Площадь треугольника-#{squaretriangl}"
