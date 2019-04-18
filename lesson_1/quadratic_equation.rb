@@ -17,7 +17,7 @@ elsif d == 0
   x = (- b/(2 * a))
 	puts "корень х = #{x}"
 else
-  sqrtd=Math.sqrt(d)
+  sqrtd = Math.sqrt(d)
   x1 = (- b - sqrtd)/(2 * a)
 	x2 = (- b + sqrtd)/(2 * a)
 	puts "корни х1 = #{x1} х2 = #{x2}"
