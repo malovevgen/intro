@@ -4,14 +4,15 @@ number_days_months = {
   March: 31, 
   April: 30,
   May: 31,
-  Juny: 30,
-  Yuly: 31,
+  June: 30,
+  July: 31,
   August: 31,
   September: 30,
   October: 31,
   November: 30,
-  December: 31}
+  December: 31
+}
 
-  number_days_months.each do |month, days|
-    puts month if days == 30
+number_days_months.each do |month, days|
+  puts month if days == 30
 end
