@@ -1,6 +1,4 @@
 purchases = {}
-sum_of_product = 0
-total_sum = 0
 loop do
   puts "Введите название товара"
   title = gets.chomp
@@ -8,11 +6,13 @@ loop do
   puts "Введите цену товара"
   price = gets.chomp.to_f
   puts "Введите количество купленного товара"
-  number = gets.chomp.to_f
-  purchases[title] = {price => number}
+  quantity = gets.chomp.to_f
+  purchases[title] = {price: price, quantity: quantity}
 end
+sum_of_product = 0
+total_sum = 0
 purchases.each do |title, price_and_number|
-  sum_of_product = price_and_number.keys.first * price_and_number.values.first
+  sum_of_product = price_and_number[:price] * price_and_number[:quantity]
   puts "#{title}: #{sum_of_product}"
   total_sum += sum_of_product
 end
