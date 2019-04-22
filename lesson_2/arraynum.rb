@@ -1,9 +1,2 @@
-arraynum = []
-num = 10
-step = 5
-last_num = 100
-while num <= last_num do
-  arraynum.push(num)
-  num += step
-end
-puts arraynum
+initialnum = 10; interval = 5; lastnum = 100
+(initialnum..lastnum).step(interval) { |num| puts num }
