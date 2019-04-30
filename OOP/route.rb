@@ -1,4 +1,4 @@
-class Rout
+class Route
   attr_accessor :stations
   attr_reader :first_station, :last_station
 
@@ -12,12 +12,11 @@ class Rout
     self.stations.insert(index, station)
   end
 
-  def erase_station(station)
+  def delete_station(station)
     self.stations.delete(station)
   end
 
   def list
     self.stations.each { |station| puts station.name }
   end
-
 end
