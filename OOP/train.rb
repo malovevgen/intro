@@ -35,10 +35,10 @@ class Train
   end
 
   def forward
-    self.current_station_index +=1 unless (self.current_station == self.route.last_station)
+    self.current_station_index +=1 unless self.current_station == self.route.last_station
   end
 
   def backward
-    self.current_station_index -=1 unless (self.current_station == self.route.first_station)
+    self.current_station_index -=1 unless self.current_station == self.route.first_station
   end
 end
