@@ -13,8 +13,7 @@ my_route.add_station(1, station3)
 my_train = Train.new(1, 'passengers', 20)  
 my_train.unhook
 my_train.hitch
-my_train.hitch
-p my_train.wagons
+#p my_train.wagons
 
 my_train.set_route(my_route)
 #my_train.forward
@@ -37,3 +36,4 @@ station2.delete_train(train3)
 p station2.counter('passengers')
 p station2.trains
 
+#
