@@ -1,5 +1,5 @@
 class Train
-  attr_accessor :speed, :type, :wagons, :number, :list, :route, :current_station_index
+  attr_accessor :speed, :type, :wagons, :number, :list, :route
 
   def initialize(number, type, wagons)
     @number = number
@@ -27,18 +27,18 @@ class Train
     
   def set_route(route)
     self.route = route
-    self.current_station_index = 0
+    current_station_index = 0
   end
 
   def current_station
-    self.route.stations[self.current_station_index]
+    self.route.stations[current_station_index]
   end
 
   def forward
-    self.current_station_index +=1 unless self.current_station == self.route.last_station
+    current_station_index +=1 unless self.current_station == self.route.last_station
   end
 
   def backward
-    self.current_station_index -=1 unless self.current_station == self.route.first_station
+    current_station_index -=1 unless self.current_station == self.route.first_station
   end
 end
