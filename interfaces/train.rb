@@ -19,17 +19,14 @@ class Train
   def current_station
     self.route.stations[@current_station_index]
   end
-
-  protected
-  # Методы вызываются только из дочерних классов
-
+  
   def forward
-    @current_station_index +=1 unless self.current_station == self.route.last_station
+    @current_station_index +=1 unless self.route.last_station?(self.current_station)
   end
 
   def backward
-    @current_station_index -=1 unless self.current_station == self.route.first_station
-  end
+    @current_station_index -=1 unless self.route.first_station?(self.current_station)
+  end  
 
   private
   # Методы вызываются только из данного класса
@@ -39,6 +36,6 @@ class Train
   end
 
   def stop
-    self.speed = 0
+    self.speed = 0 unless speed.zero?
   end
 end

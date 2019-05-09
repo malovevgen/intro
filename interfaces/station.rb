@@ -6,8 +6,10 @@ class Station
     @trains = []
   end
  
-  def list
-    self.trains.each { |train| puts train.number }
+  def list(station, trains)
+    trains.select do |train|
+      station == train.current_station
+    end
   end
 
   private
@@ -19,9 +21,9 @@ class Station
  
   def counter(type_trains)
     if type_trains == 'passengers'
-     self.trains.select { |train| train.type == 'passengers' }.count
+     self.trains.count { |train| train.type == 'passengers' }
     elsif type_trains == 'cargo'
-     self.trains.select { |train| train.type == 'freights' }.count 
+     self.trains.count { |train| train.type == 'cargo' } 
     else
      self.trains.count 
     end
