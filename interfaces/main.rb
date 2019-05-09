@@ -13,7 +13,7 @@ trains = []
 routes = []
 wagons = []
 route_stations = []
-#line 16..27 для создания массива вагонов
+
 passenger_wagon1 = PassengerWagon.new(1001)
 passenger_wagon2 = PassengerWagon.new(1002)
 passenger_wagon3 = PassengerWagon.new(1003)
@@ -50,10 +50,6 @@ def choose_route(routes)
   routes[route_index]
 end
 
-  #route.stations.each_with_index do |station, index|
-  # puts "Порядковый номер станции: #{index + 1}, название #{station.name}"  
-  #end
-
 def choose_train(trains)
   puts 'Номера поездов'
   trains.each{ |train| puts train.number }
@@ -78,7 +74,6 @@ def choose_station(stations)
   station_index = gets.chomp.to_i
   stations[station_index]
 end 
- 
 
 commands = [
 'Выход из программы',
