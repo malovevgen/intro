@@ -6,6 +6,6 @@ class PassengerTrain < Train
   end
   
   def hitch(passenger_wagon)
-    self.wagons.push(passenger_wagon) if passenger_wagon.is_a?(PassengerWagon)
+    wagons << passenger_wagon if passenger_wagon.is_a?(PassengerWagon)
   end
 end
