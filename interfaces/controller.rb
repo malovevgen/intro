@@ -1,16 +1,6 @@
 class Controller
-
   TRAIN_TYPES = ['passenger', 'cargo']
 
-  def initialize
-    #@stations = []
-    #@trains = []
-    #@routes = []
-    #@wagons = []
-    #@route_stations = []
-
-  end
-  
   def choose_train_type
     puts 'Выбирете тип поезда'
     TRAIN_TYPES.each_with_index do |cmd, key|
@@ -167,6 +157,3 @@ class Controller
     end
   end
 end
-#Controller.new.start
-
-
