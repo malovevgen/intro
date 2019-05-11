@@ -6,6 +6,6 @@ class CargoTrain < Train
   end
   
   def hitch(cargo_wagon)
-    wagons << cargo_wagon if cargo_wagon.is_a?(CargoWagon)
+    super (cargo_wagon) if cargo_wagon.is_a?(CargoWagon)
   end
 end

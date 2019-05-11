@@ -6,9 +6,13 @@ class Train
     @wagons = []
     @speed = 0
   end
+
+  def hitch(wagon)
+    wagons <<  wagon if speed.zero?
+  end
  
   def unhook
-    self.wagons.pop
+    self.wagons.pop if speed.zero?
   end
 
   def set_route(route)

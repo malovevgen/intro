@@ -1,6 +1,12 @@
 class Controller
   TRAIN_TYPES = ['passenger', 'cargo']
 
+  def initialize
+    @stations = []
+    @routes = []
+    @trains = []
+  end
+
   def choose_train_type
     puts 'Выбирете тип поезда'
     TRAIN_TYPES.each_with_index do |cmd, key|
@@ -31,13 +37,13 @@ class Controller
     trains.select{ |train| train.number == number }.first
   end
 
-  def choose_wagon(wagons)
-    puts 'Выбирете номер вагона из списка'
-    wagons.each_with_index do |wagon, index|
-      puts "#{index}: #{wagon.type} № #{wagon.number}" 
-    end
-    wagon_index = gets.chomp.to_i
-    wagons[wagon_index]
+  def choose_wagon
+    w1 = PassengerWagon.new(1001)
+    w2 = PassengerWagon.new(1002)
+    w3 = CargoWagon.new(1003)
+    w4 = CargoWagon.new(1004)
+    puts 'Введите название вагона'
+    current_wagon = gets.chomp
   end
 
   def choose_station(stations)
@@ -49,24 +55,94 @@ class Controller
     stations[station_index]
   end
 
+  def create_train
+    type = choose_train_type
+    number = enter_number
+    if type == 'passenger'
+      train = PassengerTrain.new(number)
+    elsif type == 'cargo'
+      train = CargoTrain.new(number)
+    end
+    @trains << train
+  end
+
+  def assign_route
+    train = choose_train(@trains)
+    route = choose_route(@routes)
+    train.set_route(route)
+    puts train.route
+  end
+
+  def attach_wagon
+    current_train = choose_train(@trains)
+    current_wagon = choose_wagon 
+    current_train.hitch(current_wagon)
+    puts current_train.wagons
+  end
+  
+  def detach_wagon
+    current_train = choose_train(@trains)
+    current_train.unhook
+  end
+
+  def forward_on_route
+    current_train = choose_train(@trains)
+    current_train.forward
+    puts current_train.current_station.name
+  end
+
+  def back_on_route
+    current_train = choose_train(@trains)
+    current_train.backward
+    puts current_train.current_station.name
+  end  
+
+  def create_route
+    puts 'Первая станция'
+    first_station = choose_station(@stations)
+    puts 'Последняя станция'
+    last_station = choose_station(@stations)
+    route = Route.new(first_station, last_station)
+    @routes << route
+  end
+
+  def add_station
+    route = choose_route(@routes)
+    puts 'Новая станция'
+    station = choose_station(@stations)
+    puts 'Введите порядковый номер новой станции'
+    number = gets.chomp.to_i
+    route.add_station(number - 1, station)
+  end
+
+  def delete_station
+    route = choose_route(@routes)
+    route_stations = route.stations
+    station =  choose_station(@stations) 
+    route.delete_station(station)
+  end
+
+  def view_route_sheet
+    current_route = choose_route(@routes)
+    current_route.list.each_with_index do |station, index|
+      puts "#{index}: #{station.name}"
+    end
+  end
+
+  def create_station
+    puts 'Введите название станции'
+    name = gets.chomp
+    station = Station.new(name)
+    @stations << station
+  end
+
+  def view_station_sheet
+    station = choose_station(@stations)
+    puts station.list(station, @trains)
+  end    
+
   def start
-    wagons = []
-    stations = []
-    trains = []
-    routes = []
-    passenger_wagon1 = PassengerWagon.new(1001)
-    passenger_wagon2 = PassengerWagon.new(1002)
-    passenger_wagon3 = PassengerWagon.new(1003)
-    cargo_wagon1 = CargoWagon.new(2001)
-    cargo_wagon2 = CargoWagon.new(2002)
-    cargo_wagon3 = CargoWagon.new(2003)
-    wagons << passenger_wagon1
-    wagons << passenger_wagon2
-    wagons << passenger_wagon3
-    wagons << cargo_wagon1
-    wagons << cargo_wagon2
-    wagons << cargo_wagon3
-    commands = [
+     commands = [
     'Выход из программы',
     'Создать поезд',
     'Назначить маршрут',
@@ -92,67 +168,29 @@ class Controller
         when commands.index('Выход из программы')
           break
         when commands.index('Создать поезд')
-          type = choose_train_type
-          number = enter_number
-          if type == 'passenger'
-            train = PassengerTrain.new(number)
-          elsif type == 'cargo'
-            train = CargoTrain.new(number)
-          end
-          trains << train
+          create_train
         when commands.index('Назначить маршрут')
-          train = choose_train(trains)
-          route = choose_route(routes)
-          train.set_route(route)
-          puts train.route
+          assign_route
         when commands.index('Добавить вагон')
-          current_train = choose_train(trains)
-          current_wagon = choose_wagon(wagons) 
-          current_train.hitch(current_wagon)
-          puts current_train.wagons
+          attach_wagon
         when commands.index('Отцепить вагон')
-          current_train = choose_train(trains)
-          current_train.unhook
+          detach_wagon
         when commands.index('Вперед по маршруту')
-          current_train = choose_train(trains)
-          current_train.forward
-          puts current_train.current_station.name
+          forward_on_route
         when commands.index('Назад по маршруту')
-          current_train = choose_train(trains)
-          current_train.backward
-          puts current_train.current_station.name
+          back_on_route
         when commands.index('Создать маршрут')
-          puts 'Первая станция'
-          first_station = choose_station(stations)
-          puts 'Последняя станция'
-          last_station = choose_station(stations)
-          route = Route.new(first_station, last_station)
-          routes << route
+          create_route
         when commands.index('Добавить станцию')
-          route = choose_route(routes)
-          puts 'Новая станция'
-          station = choose_station(stations)
-          puts 'Введите порядковый номер новой станции'
-          number = gets.chomp.to_i
-          route.add_station(number - 1, station)
+          add_station
         when commands.index('Удалить станцию')
-          route = choose_route(routes)
-          route_stations = route.stations
-          station =  choose_station(stations) 
-          route.delete_station(station)
+          delete_station
         when commands.index('Просмотреть лист маршрута')
-          current_route = choose_route(routes)
-          current_route.list.each_with_index do |station, index|
-            puts "#{index}: #{station.name}"
-          end
+          view_route_sheet
         when commands.index('Создать станцию')
-          puts 'Введите название станции'
-          name = gets.chomp
-          station = Station.new(name)
-          stations << station
+          create_station
         when commands.index('Просмотреть лист станции')
-          station = choose_station(stations)
-          puts station.list(station, trains) 
+          view_station_sheet 
       end
     end
   end
