@@ -1,11 +1,20 @@
 class Train
+  include Manufacturer
   attr_accessor :speed, :wagons, :number, :route
+
+  @@trains = {}
   
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
+    @@trains[@number] = self
   end
+
+  def self.find(number)
+    @@trains[number]
+  end
+
 
   def hitch(wagon)
     wagons <<  wagon if speed.zero?
