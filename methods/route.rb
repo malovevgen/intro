@@ -1,4 +1,7 @@
+require_relative 'instance_counter'
+
 class Route
+  include InstanceCounter
   attr_accessor :stations, :first_station, :last_station, :station
   attr_reader 
   def initialize(first_station, last_station)
@@ -26,6 +29,4 @@ class Route
   def last_station?(station)
     station == last_station
   end
-
-
 end

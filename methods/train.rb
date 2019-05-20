@@ -1,20 +1,23 @@
+require_relative 'manufacturer'
+require_relative 'instance_counter'
+
 class Train
   include Manufacturer
-  attr_accessor :speed, :wagons, :number, :route
+  include InstanceCounter
+  @@trains = []
 
-  @@trains = {}
-  
+  def self.find(number)
+    @@trains.find { |item| item.number == number }
+  end
+
+  attr_accessor :speed, :wagons, :number, :route
+ 
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
-    @@trains[@number] = self
+    @@trains << self
   end
-
-  def self.find(number)
-    @@trains[number]
-  end
-
 
   def hitch(wagon)
     wagons <<  wagon if speed.zero?
