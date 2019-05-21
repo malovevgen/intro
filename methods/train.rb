@@ -20,7 +20,6 @@ class Train
     @@trains[number]
   end
 
-
   def hitch(wagon)
     wagons <<  wagon if speed.zero?
   end
