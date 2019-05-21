@@ -7,10 +7,6 @@ class Controller
     @trains = []
   end
 
-
-
-
-
   def choose_train_type
     puts 'Выбирете тип поезда'
     TRAIN_TYPES.each_with_index do |cmd, key|

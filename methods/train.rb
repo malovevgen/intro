@@ -4,20 +4,22 @@ require_relative 'instance_counter'
 class Train
   include Manufacturer
   include InstanceCounter
-  @@trains = []
-
-  def self.find(number)
-    @@trains.find { |item| item.number == number }
-  end
-
+  @@trains = {}
+  
   attr_accessor :speed, :wagons, :number, :route
  
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
-    @@trains << self
+    @@trains[@number] = self
+    register_instance
   end
+
+  def self.find(number)
+    @@trains[number]
+  end
+
 
   def hitch(wagon)
     wagons <<  wagon if speed.zero?
