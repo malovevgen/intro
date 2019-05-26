@@ -1,20 +1,29 @@
+require_relative 'manufacturer'
+require_relative 'instance_counter'
+require_relative 'valid'
+
 class Train
+  include Manufacturer
+  include InstanceCounter
+  include Valid
+
+  @@trains = {}
+
   attr_accessor :speed, :wagons, :number, :route
 
   NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i
-    
+
+  def self.find(number)
+    @@trains[number]
+  end
+
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
     validate!
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
+    @@trains[@number] = self
+    register_instance
   end
 
   def hitch(wagon)

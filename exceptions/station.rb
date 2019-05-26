@@ -1,19 +1,23 @@
+require_relative 'instance_counter'
+require_relative 'valid'
+
 class Station
+  include InstanceCounter
+  include Valid
   attr_accessor :name, :trains
 
   NAME_FORMAT = /^[а-я\s]+$/i
+
+  def self.all
+    @all ||= []
+  end
 
   def initialize(name)
     @name = name
     @trains = []
     validate!
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
+    self.class.all << self
+    register_instance
   end
  
   def list(station, trains)
@@ -30,10 +34,8 @@ class Station
   end
  
   def counter(type_trains)
-    if type_trains == 'passengers'
-     self.trains.count { |train| train.type == 'passengers' }
-    elsif type_trains == 'cargo'
-     self.trains.count { |train| train.type == 'cargo' } 
+    if type_trains
+      self.trains.count { |train| train.type == type_trains }
     else
      self.trains.count 
     end

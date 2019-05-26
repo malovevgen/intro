@@ -1,4 +1,9 @@
+require_relative 'manufacturer'
+require_relative 'valid'
+
 class Wagon
+  include Manufacturer
+  include Valid
   attr_accessor :number
 
   NUMBER_format = /^\d{6}$/
@@ -6,13 +11,6 @@ class Wagon
   def initialize(number)
     @number = number
     validate!
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 
   private
