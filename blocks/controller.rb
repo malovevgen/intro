@@ -5,10 +5,11 @@ class Controller
     @stations = []
     @routes = []
     @trains = []
+    @wagons = []
   end
 
-  def choose_train_type
-    puts 'Выбирете тип поезда:1,enter, если грузовой; enter, если пассажирский'
+  def choose_type
+    puts 'Выбирете тип:1,enter, если грузовой; enter, если пассажирский'
     index_type = gets.chomp.to_i
     if index_type == 1 
       TRAIN_TYPES[1]
@@ -20,6 +21,16 @@ class Controller
   def enter_number
     puts 'Введите номер в формате ххх(-)хх,где х - цифра или латинская буква'
     gets.chomp
+  end
+
+  def printing_volume
+    puts "Объем вагона"
+    gets.chomp.to_f
+  end
+
+  def printing_seats
+    puts "Количество мест в вагоне"
+    gets.chomp.to_i
   end
 
   def enter_name
@@ -43,13 +54,17 @@ class Controller
     trains.select{ |train| train.number == number }.first
   end
 
-  def choose_wagon
-    w1 = PassengerWagon.new(1001)
-    w2 = PassengerWagon.new(1002)
-    w3 = CargoWagon.new(1003)
-    w4 = CargoWagon.new(1004)
-    puts 'Введите название вагона'
-    current_wagon = gets.chomp
+  def choose_wagon(wagons)
+    puts 'Номера вагонов'
+    wagons.each{ |wagon| puts wagon.number }
+    number = enter_number
+    wagons.select{ |wagon| wagon.number == number }.first
+    #w1 = PassengerWagon.new(1001)
+    #w2 = PassengerWagon.new(1002)
+    #w3 = CargoWagon.new(1003)
+    #w4 = CargoWagon.new(1004)
+    #puts 'Введите название вагона'
+    #current_wagon = gets.chomp
   end
 
   def choose_station(stations)
@@ -62,7 +77,7 @@ class Controller
   end
 
   def create_train
-    type = choose_train_type
+    type = choose_type
     number = enter_number
     if type == 'passenger'
       train = PassengerTrain.new(number)
@@ -152,7 +167,34 @@ class Controller
   def view_station_sheet
     station = choose_station(@stations)
     puts station.list(station, @trains)
-  end    
+  end
+
+  def create_wagon
+    type = choose_type
+    number = enter_number
+    if type == 'passenger'
+      seats = printing_seats
+      wagon = PassengerWagon.new(number, seats)
+    elsif type == 'cargo'
+      volume = printing_volume
+      wagon = CargoWagon.new(number, volume)
+    end
+    @wagons << wagon
+  end
+
+  def take_seat
+    wagon = choose_wagon(@wagons)
+    wagon.take_seat
+    puts wagon.seats_filling
+  end 
+
+  def load
+    wagon = choose_wagon(@wagons)
+    puts "Введите добавляемый объем, куб.м"
+    load_volume = gets.chomp.to_f
+    wagon.load(load_volume)
+    puts wagon.volume_filling
+  end  
 
   def start
      commands = [
@@ -168,7 +210,10 @@ class Controller
     'Удалить станцию',
     'Просмотреть лист маршрута',
     'Создать станцию',
-    'Просмотреть лист станции'
+    'Просмотреть лист станции',
+    'Создать вагон',
+    'Занять место в вагоне',
+    'Добавить объем'
     ]
     puts 'Выбирете команду'
     loop do
@@ -203,7 +248,13 @@ class Controller
         when commands.index('Создать станцию')
           create_station
         when commands.index('Просмотреть лист станции')
-          view_station_sheet 
+          view_station_sheet
+        when commands.index('Создать вагон')
+          create_wagon 
+        when commands.index('Занять место в вагоне')
+          take_seat
+        when commands.index('Добавить объем')
+          load
       end
     end
   end

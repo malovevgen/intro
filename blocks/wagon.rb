@@ -6,7 +6,7 @@ class Wagon
   include Valid
   attr_accessor :number
 
-  NUMBER_format = /^\d{6}$/
+  NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i
 
   def initialize(number)
     @number = number
