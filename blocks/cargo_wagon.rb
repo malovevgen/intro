@@ -1,5 +1,6 @@
 class CargoWagon < Wagon
-  attr_accessor :volume, :volume_filling, :load_volume
+  attr_accessor :volume,  :load_volume, :volume_filling
+  attr_reader  :free_volume
 
   def initialize(number, volume)
     super(number)
@@ -12,6 +13,10 @@ class CargoWagon < Wagon
   end
 
   def load (load_volume)
-    self.volume_filling += load_volume if (volume - volume_filling) >= load_volume
+    self.volume_filling += load_volume if (volume - volume_filling)  >= load_volume
   end
+
+  def free
+    volume - volume_filling
+  end   
 end

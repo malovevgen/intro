@@ -49,7 +49,11 @@ class Train
 
   def backward
     @current_station_index -=1 unless self.route.first_station?(self.current_station)
-  end  
+  end 
+
+  def wagons_of_train
+    @wagons.length 
+  end 
 
   private
   # Методы вызываются только из данного класса

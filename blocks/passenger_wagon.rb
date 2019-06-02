@@ -14,4 +14,8 @@ class PassengerWagon < Wagon
   def take_seat
     self.seats_filling += 1 if seats > seats_filling
   end
+
+  def free
+    seats - seats_filling
+  end
 end

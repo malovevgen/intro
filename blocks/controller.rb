@@ -59,12 +59,6 @@ class Controller
     wagons.each{ |wagon| puts wagon.number }
     number = enter_number
     wagons.select{ |wagon| wagon.number == number }.first
-    #w1 = PassengerWagon.new(1001)
-    #w2 = PassengerWagon.new(1002)
-    #w3 = CargoWagon.new(1003)
-    #w4 = CargoWagon.new(1004)
-    #puts 'Введите название вагона'
-    #current_wagon = gets.chomp
   end
 
   def choose_station(stations)
@@ -100,7 +94,7 @@ class Controller
 
   def attach_wagon
     current_train = choose_train(@trains)
-    current_wagon = choose_wagon 
+    current_wagon = choose_wagon(@wagons) 
     current_train.hitch(current_wagon)
     puts current_train.wagons
   end
@@ -167,6 +161,7 @@ class Controller
   def view_station_sheet
     station = choose_station(@stations)
     puts station.list(station, @trains)
+    puts station.trains_station
   end
 
   def create_wagon
@@ -194,8 +189,25 @@ class Controller
     load_volume = gets.chomp.to_f
     wagon.load(load_volume)
     puts wagon.volume_filling
-  end  
+  end
 
+  def stations_info
+    @stations.each do |station|
+      puts "#{station.name} "
+      station.list(station, @trains).each do |train|
+        puts "Поезд № #{train.number},тип-#{train.type} вагонов:#{train.wagons_of_train}"
+        train.wagons.each do |wagon|
+          print "Вагон № #{wagon.number} Тип #{wagon.type}"
+          if wagon.type == 'passenger'
+            puts "Свободно: #{wagon.free} Занято: #{wagon.seats_filling}"
+          elsif wagon.type == 'cargo'
+            puts "Свободно: #{wagon.free} Занято: #{wagon.volume_filling}"
+          end
+        end
+      end
+    end
+  end
+     
   def start
      commands = [
     'Выход из программы',
@@ -213,7 +225,8 @@ class Controller
     'Просмотреть лист станции',
     'Создать вагон',
     'Занять место в вагоне',
-    'Добавить объем'
+    'Добавить объем',
+    'Информация о станции'
     ]
     puts 'Выбирете команду'
     loop do
@@ -255,6 +268,8 @@ class Controller
           take_seat
         when commands.index('Добавить объем')
           load
+        when commands.index('Информация о станции')
+          stations_info
       end
     end
   end
