@@ -27,6 +27,10 @@ class Station
     end
   end
 
+  def trains_with_block(station, trains) 
+    trains.each {|train| train }
+  end
+ 
   private
   # Методы вызываются только из данного класса
 

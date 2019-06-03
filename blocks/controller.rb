@@ -160,8 +160,8 @@ class Controller
 
   def view_station_sheet
     station = choose_station(@stations)
-    puts station.list(station, @trains)
-    puts station.trains_station
+    #puts station.list(station, @trains)
+    puts station.trains_with_block(station, @trains)
   end
 
   def create_wagon
@@ -177,18 +177,16 @@ class Controller
     @wagons << wagon
   end
 
-  def take_seat
+  def add_to_wagon
     wagon = choose_wagon(@wagons)
-    wagon.take_seat
-    puts wagon.seats_filling
-  end 
-
-  def load
-    wagon = choose_wagon(@wagons)
-    puts "Введите добавляемый объем, куб.м"
-    load_volume = gets.chomp.to_f
-    wagon.load(load_volume)
-    puts wagon.volume_filling
+    if wagon.type == 'cargo'
+      puts "Введите добавляемый объем, куб.м" 
+      value = gets.chomp.to_f
+    elsif wagon.type == 'passanger'
+      value = 1
+    end
+    wagon.add(value)
+    puts wagon.filling
   end
 
   def stations_info
@@ -198,11 +196,7 @@ class Controller
         puts "Поезд № #{train.number},тип-#{train.type} вагонов:#{train.wagons_of_train}"
         train.wagons.each do |wagon|
           print "Вагон № #{wagon.number} Тип #{wagon.type}"
-          if wagon.type == 'passenger'
-            puts "Свободно: #{wagon.free} Занято: #{wagon.seats_filling}"
-          elsif wagon.type == 'cargo'
-            puts "Свободно: #{wagon.free} Занято: #{wagon.volume_filling}"
-          end
+          puts "Свободно: #{wagon.free} Занято: #{wagon.filling}"
         end
       end
     end
@@ -224,8 +218,7 @@ class Controller
     'Создать станцию',
     'Просмотреть лист станции',
     'Создать вагон',
-    'Занять место в вагоне',
-    'Добавить объем',
+    'Добавить в вагон',
     'Информация о станции'
     ]
     puts 'Выбирете команду'
@@ -264,10 +257,8 @@ class Controller
           view_station_sheet
         when commands.index('Создать вагон')
           create_wagon 
-        when commands.index('Занять место в вагоне')
-          take_seat
-        when commands.index('Добавить объем')
-          load
+        when commands.index('Добавить в вагон')
+          add_to_wagon
         when commands.index('Информация о станции')
           stations_info
       end

@@ -53,6 +53,10 @@ class Train
 
   def wagons_of_train
     @wagons.length 
+  end
+
+  def wagons_with_block(train, wagons) 
+    wagons.each {|wagon| wagon }
   end 
 
   private
