@@ -55,8 +55,8 @@ class Train
     @wagons.length 
   end
 
-  def wagons_with_block(train, wagons) 
-    wagons.each {|wagon| wagon }
+  def each_wagon 
+    wagons.each { |wagon| yield(wagon) }
   end 
 
   private

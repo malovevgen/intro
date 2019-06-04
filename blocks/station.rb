@@ -27,8 +27,8 @@ class Station
     end
   end
 
-  def trains_with_block(station, trains) 
-    trains.each {|train| train }
+  def each_train
+    trains.each { |train| yield(train) }
   end
  
   private

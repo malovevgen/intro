@@ -160,8 +160,10 @@ class Controller
 
   def view_station_sheet
     station = choose_station(@stations)
-    #puts station.list(station, @trains)
-    puts station.trains_with_block(station, @trains)
+    puts station.list(station, @trains)
+    station.each_train do |train|
+      puts "#{train}"
+    end
   end
 
   def create_wagon
