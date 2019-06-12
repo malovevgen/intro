@@ -1,11 +1,9 @@
 class CargoTrain < Train
-  attr_accessor :type
-
   def type
-    @type = "cargo"
+    @type = 'cargo'
   end
-  
+
   def hitch(cargo_wagon)
-    super (cargo_wagon) if cargo_wagon.is_a?(CargoWagon)
+    super cargo_wagon if cargo_wagon.is_a?(CargoWagon)
   end
 end

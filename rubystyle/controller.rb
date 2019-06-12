@@ -1,5 +1,12 @@
 class Controller
-  TRAIN_TYPES = ['passenger', 'cargo']
+  TRAIN_TYPES = %w[passenger cargo].freeze
+  @@commands = %w[
+    Выход_из_программы Создать_поезд Назначить_маршрут Добавить_вагон
+    Отцепить_вагон Вперед_по_маршруту Назад_по_маршруту Создать_маршрут
+    Добавить_станцию Удалить_станцию Просмотреть_лист_маршрута Создать_станцию
+    Просмотреть_лист_станции Создать_вагон Добавить_в_вагон
+    Информация_о_станции
+  ].freeze
 
   def initialize
     @stations = []
@@ -11,11 +18,11 @@ class Controller
   def choose_type
     puts 'Выбирете тип:1,enter, если грузовой; enter, если пассажирский'
     index_type = gets.chomp.to_i
-    if index_type == 1 
+    if index_type == 1
       TRAIN_TYPES[1]
     else
       TRAIN_TYPES[0]
-    end    
+    end
   end
 
   def enter_number
@@ -24,12 +31,12 @@ class Controller
   end
 
   def printing_volume
-    puts "Объем вагона"
+    puts 'Объем вагона'
     gets.chomp.to_f
   end
 
   def printing_seats
-    puts "Количество мест в вагоне"
+    puts 'Количество мест в вагоне'
     gets.chomp.to_i
   end
 
@@ -41,7 +48,7 @@ class Controller
   def choose_route(routes)
     puts 'Выбирете маршрут'
     routes.each_with_index do |route, index|
-      puts "#{index}: #{route.first_station.name} - #{route.last_station.name}" 
+      puts "#{index}: #{route.first_station.name} - #{route.last_station.name}"
     end
     route_index = gets.chomp.to_i
     routes[route_index]
@@ -49,25 +56,35 @@ class Controller
 
   def choose_train(trains)
     puts 'Номера поездов'
-    trains.each{ |train| puts train.number }
+    trains.each { |train| puts train.number }
     number = enter_number
-    trains.select{ |train| train.number == number }.first
+    trains.select { |train| train.number == number }.first
   end
 
   def choose_wagon(wagons)
     puts 'Номера вагонов'
-    wagons.each{ |wagon| puts wagon.number }
+    wagons.each { |wagon| puts wagon.number }
     number = enter_number
-    wagons.select{ |wagon| wagon.number == number }.first
+    wagons.select { |wagon| wagon.number == number }.first
   end
 
   def choose_station(stations)
     puts 'Выбрете станцию из списка'
     stations.each_with_index do |station, index|
       puts "#{index}: #{station.name}"
-    end  
+    end
     station_index = gets.chomp.to_i
     stations[station_index]
+  end
+
+  def train_list
+    puts "Поезд № #{train.number},
+    тип-#{train.type} вагонов:#{train.wagons_of_train}"
+  end
+
+  def wagon_list
+    print "Вагон № #{wagon.number} Тип #{wagon.type}"
+    puts "Свободно: #{wagon.free} Занято: #{wagon.filling}"
   end
 
   def create_train
@@ -80,7 +97,7 @@ class Controller
     end
     @trains << train
     puts "Поезд #{number}-#{type} создан"
-  rescue
+  rescue NameError
     puts 'Неправильный формат номера'
     retry
   end
@@ -94,11 +111,11 @@ class Controller
 
   def attach_wagon
     current_train = choose_train(@trains)
-    current_wagon = choose_wagon(@wagons) 
+    current_wagon = choose_wagon(@wagons)
     current_train.hitch(current_wagon)
     puts current_train.wagons
   end
-  
+
   def detach_wagon
     current_train = choose_train(@trains)
     current_train.unhook
@@ -114,7 +131,7 @@ class Controller
     current_train = choose_train(@trains)
     current_train.backward
     puts current_train.current_station.name
-  end  
+  end
 
   def create_route
     puts 'Первая станция'
@@ -136,8 +153,8 @@ class Controller
 
   def delete_station
     route = choose_route(@routes)
-    route_stations = route.stations
-    station =  choose_station(@stations) 
+    route.stations
+    station = choose_station(@stations)
     route.delete_station(station)
   end
 
@@ -153,7 +170,7 @@ class Controller
     station = Station.new(name)
     @stations << station
     puts "Станция #{name} создана"
-  rescue
+  rescue NameError
     puts 'Неправильный формат названия'
     retry
   end
@@ -162,7 +179,7 @@ class Controller
     station = choose_station(@stations)
     puts station.list(station, @trains)
     station.each_train do |train|
-      puts "#{train}"
+      puts train.to_s
     end
   end
 
@@ -182,7 +199,7 @@ class Controller
   def add_to_wagon
     wagon = choose_wagon(@wagons)
     if wagon.type == 'cargo'
-      puts "Введите добавляемый объем, куб.м" 
+      puts 'Введите добавляемый объем, куб.м'
       value = gets.chomp.to_f
     elsif wagon.type == 'passanger'
       value = 1
@@ -193,76 +210,53 @@ class Controller
 
   def stations_info
     @stations.each do |station|
-      puts "#{station.name} "
-      station.list(station, @trains).each do |train|
-        puts "Поезд № #{train.number},тип-#{train.type} вагонов:#{train.wagons_of_train}"
-        train.wagons.each do |wagon|
-          print "Вагон № #{wagon.number} Тип #{wagon.type}"
-          puts "Свободно: #{wagon.free} Занято: #{wagon.filling}"
-        end
-      end
+      puts station.name.to_s
+      station.list(station, @trains).each(&:train_list)
+      train.wagons.each(&:wagon_list)
     end
   end
-     
+
   def start
-     commands = [
-    'Выход из программы',
-    'Создать поезд',
-    'Назначить маршрут',
-    'Добавить вагон',
-    'Отцепить вагон',
-    'Вперед по маршруту',
-    'Назад по маршруту',
-    'Создать маршрут',
-    'Добавить станцию',
-    'Удалить станцию',
-    'Просмотреть лист маршрута',
-    'Создать станцию',
-    'Просмотреть лист станции',
-    'Создать вагон',
-    'Добавить в вагон',
-    'Информация о станции'
-    ]
     puts 'Выбирете команду'
     loop do
-      commands.each_with_index do |cmd, key|
+      @@commands.each_with_index do |cmd, key|
         puts "#{key}: #{cmd}"
-      end  
+      end
       command = gets.chomp.to_i
-      puts "#{commands[command]}"
+      puts @@commands[command].to_s
       case command
-        when commands.index('Выход из программы')
-          break
-        when commands.index('Создать поезд')
-          create_train
-        when commands.index('Назначить маршрут')
-          assign_route
-        when commands.index('Добавить вагон')
-          attach_wagon
-        when commands.index('Отцепить вагон')
-          detach_wagon
-        when commands.index('Вперед по маршруту')
-          forward_on_route
-        when commands.index('Назад по маршруту')
-          back_on_route
-        when commands.index('Создать маршрут')
-          create_route
-        when commands.index('Добавить станцию')
-          add_station
-        when commands.index('Удалить станцию')
-          delete_station
-        when commands.index('Просмотреть лист маршрута')
-          view_route_sheet
-        when commands.index('Создать станцию')
-          create_station
-        when commands.index('Просмотреть лист станции')
-          view_station_sheet
-        when commands.index('Создать вагон')
-          create_wagon 
-        when commands.index('Добавить в вагон')
-          add_to_wagon
-        when commands.index('Информация о станции')
-          stations_info
+      when @@commands.index('Выход_из_программы')
+        break
+      when @@commands.index('Создать_поезд')
+        create_train
+      when @@commands.index('Назначить_маршрут')
+        assign_route
+      when @@commands.index('Добавить_вагон')
+        attach_wagon
+      when @@commands.index('Отцепить_вагон')
+        detach_wagon
+      when @@commands.index('Вперед_по_маршруту')
+        forward_on_route
+      when @@commands.index('Назад_по_маршруту')
+        back_on_route
+      when @@commands.index('Создать_маршрут')
+        create_route
+      when @@commands.index('Добавить_станцию')
+        add_station
+      when @@commands.index('Удалить_станцию')
+        delete_station
+      when @@commands.index('Просмотреть_лист_маршрута')
+        view_route_sheet
+      when @@commands.index('Создать_станцию')
+        create_station
+      when @@commands.index('Просмотреть_лист_станции')
+        view_station_sheet
+      when @@commands.index('Создать_вагон')
+        create_wagon
+      when @@commands.index('Добавить_в_вагон')
+        add_to_wagon
+      when @@commands.index('Информация_о_станции')
+        stations_info
       end
     end
   end

@@ -1,7 +1,5 @@
 class CargoWagon < Wagon
-
   def type
-    "cargo"
+    'cargo'
   end
-
 end
