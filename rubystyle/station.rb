@@ -7,7 +7,7 @@ class Station
 
   attr_accessor :name, :trains
 
-  NAME_FORMAT = /^[а-я\s]+$/i
+  NAME_FORMAT = /^[а-я\s]+$/i.freeze
 
   def self.all
     @all ||= []
@@ -30,27 +30,26 @@ class Station
   def each_train
     trains.each { |train| yield(train) }
   end
- 
+
   private
+
   # Методы вызываются только из данного класса
 
   def add_train(train)
-    self.trains << train
+    trains << train
   end
- 
+
   def counter(type_trains)
     if type_trains
-      self.trains.count { |train| train.type == type_trains }
+      trains.count { |train| train.type == type_trains }
     else
-     self.trains.count 
+      trains.count
     end
   end
 
   def delete_train(train)
-    self.trains.delete(train)
+    trains.delete(train)
   end
-
-
 
   def validate!
     raise if name !~ NAME_FORMAT

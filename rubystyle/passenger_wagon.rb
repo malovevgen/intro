@@ -1,6 +1,5 @@
 class PassengerWagon < Wagon
-  
   def type
-    "passenger"
+    'passenger'
   end
 end

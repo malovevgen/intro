@@ -6,7 +6,7 @@ class Wagon
   include Valid
   attr_accessor :number, :capacity, :filling
 
-  NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i
+  NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i.freeze
 
   def initialize(number, capacity)
     @number = number
@@ -15,14 +15,14 @@ class Wagon
     validate!
   end
 
-  def add (value)
+  def add(value)
     value ||= 1
-    self.filling += value if (capacity - filling)  >= value
+    self.filling += value if (capacity - filling) >= value
   end
 
   def free
     capacity - filling
-  end   
+  end
 
   private
 

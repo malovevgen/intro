@@ -11,22 +11,22 @@ class Route
     register_instance
   end
 
-  def add_station(index, station) 
-    self.stations.insert(index, station)
+  def add_station(index, station)
+    stations.insert(index, station)
   end
 
   def delete_station(station)
-    self.stations.delete(station)
+    stations.delete(station)
   end
 
   def list
-    self.stations
+    stations
   end
 
   def first_station?(station)
     station == first_station
   end
-  
+
   def last_station?(station)
     station == last_station
   end
