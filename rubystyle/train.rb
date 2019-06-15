@@ -34,7 +34,7 @@ class Train
     wagons.pop if speed.zero?
   end
 
-  def set_route(route)
+  def establish_route(route)
     self.route = route
     @current_station_index = 0
   end
@@ -44,15 +44,11 @@ class Train
   end
 
   def forward
-    unless route.last_station?(current_station)
-      @current_station_index += 1
-    end
+    @current_station_index += 1 unless route.last_station?(current_station)
   end
 
   def backward
-    unless route.first_station?(current_station)
-      @current_station_index -= 1
-    end
+    @current_station_index -= 1 unless route.first_station?(current_station)
   end
 
   def wagons_of_train
@@ -65,7 +61,7 @@ class Train
 
   private
 
-  # Методы вызываются только из данного класса
+  # Methods are called only from this class
 
   def change_speed(speed)
     self.speed = speed

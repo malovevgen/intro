@@ -80,22 +80,40 @@ class Controller
     puts "Свободно: #{wagon.free} Занято: #{wagon.filling}"
   end
 
+  def create_wagon
+    type = choose_type
+    number = enter_number
+    if type == 'passenger'
+      seats = printing_seats
+      wagon = PassengerWagon.new(number, seats)
+    elsif type == 'cargo'
+      volume = printing_volume
+      wagon = CargoWagon.new(number, volume)
+    end
+    @wagons << wagon
+  end
+
+  def add_to_wagon
+    wagon = choose_wagon(@wagons)
+    if wagon.type == 'cargo'
+      puts 'Введите добавляемый объем, куб.м'
+      value = gets.chomp.to_f
+    elsif wagon.type == 'passanger'
+      value = 1
+    end
+    wagon.add(value)
+    puts wagon.filling
+  end
+
   def create_train
     number = enter_number
     type = choose_type
-    train = type == 'cargo' ? CargoTrain.new(number) : PassengerTrain.new(number)
+    train = Object.const_get("#{type.capitalize}Train").new(number)
     @trains << train
     puts "Поезд #{number}-#{type} создан"
   rescue StandardError
     puts 'Неправильный формат номера'
     retry
-  end
-
-  def assign_route
-    train = choose_train(@trains)
-    route = choose_route(@routes)
-    train.set_route(route)
-    puts train.route
   end
 
   def attach_wagon
@@ -110,6 +128,13 @@ class Controller
     current_train.unhook
   end
 
+  def assign_route
+    train = choose_train(@trains)
+    route = choose_route(@routes)
+    train.establish_route(route)
+    puts train.route
+  end
+
   def forward_on_route
     current_train = choose_train(@trains)
     current_train.forward
@@ -120,6 +145,16 @@ class Controller
     current_train = choose_train(@trains)
     current_train.backward
     puts current_train.current_station.name
+  end
+
+  def create_station
+    name = enter_name
+    station = Station.new(name)
+    @stations << station
+    puts "Станция #{name} создана"
+  rescue NameError
+    puts 'Неправильный формат названия'
+    retry
   end
 
   def create_route
@@ -154,47 +189,12 @@ class Controller
     end
   end
 
-  def create_station
-    name = enter_name
-    station = Station.new(name)
-    @stations << station
-    puts "Станция #{name} создана"
-  rescue NameError
-    puts 'Неправильный формат названия'
-    retry
-  end
-
   def view_station_sheet
     station = choose_station(@stations)
     puts station.list(station, @trains)
     station.each_train do |train|
       puts train.to_s
     end
-  end
-
-  def create_wagon
-    type = choose_type
-    number = enter_number
-    if type == 'passenger'
-      seats = printing_seats
-      wagon = PassengerWagon.new(number, seats)
-    elsif type == 'cargo'
-      volume = printing_volume
-      wagon = CargoWagon.new(number, volume)
-    end
-    @wagons << wagon
-  end
-
-  def add_to_wagon
-    wagon = choose_wagon(@wagons)
-    if wagon.type == 'cargo'
-      puts 'Введите добавляемый объем, куб.м'
-      value = gets.chomp.to_f
-    elsif wagon.type == 'passanger'
-      value = 1
-    end
-    wagon.add(value)
-    puts wagon.filling
   end
 
   def stations_info
@@ -205,51 +205,42 @@ class Controller
     end
   end
 
-  def menu_wagon
-    commands = %w[Выход Создать_вагон Добавить_в_вагон]
+  def menu_with_exit(commands)
     puts 'Выбирете команду'
     loop do
-      commands.each_with_index do |cmd, key|
-        puts "#{key}: #{cmd}"
-      end
+      commands.each_with_index { |cmd, key| puts "#{key}: #{cmd}" }
       command = gets.chomp.to_i
-      puts commands[command].to_s
       case command
-      when commands.index('Выход')
-        break
-      when commands.index('Создать_вагон')
-        create_wagon
-      when commands.index('Добавить_в_вагон')
-        add_to_wagon
+      when commands.index('Выход') then break
+      else
+        yield(commands, command)
+      end
+    end
+  end
+
+  def menu_wagon
+    commands = %w[Выход Создать_вагон Добавить_в_вагон]
+    menu_with_exit(commands) do |all_commands, current_command|
+      case current_command
+      when all_commands.index('Создать_вагон') then create_wagon
+      when all_commands.index('Добавить_в_вагон') then add_to_wagon
       end
     end
   end
 
   def menu_train
     commands = %w[
-      Выход Создать_поезд Добавить_вагон Отцепить_вагон Вперед_по_маршруту
-      Назад_по_маршруту
+      Выход Создать_поезд Добавить_вагон Отцепить_вагон Назначить_маршрут
+      Вперед_по_маршруту Назад_по_маршруту
     ]
-    puts 'Выбирете команду'
-    loop do
-      commands.each_with_index do |cmd, key|
-        puts "#{key}: #{cmd}"
-      end
-      command = gets.chomp.to_i
-      puts commands[command].to_s
-      case command
-      when commands.index('Выход')
-        break
-      when commands.index('Создать_поезд')
-        create_train
-      when commands.index('Добавить_вагон')
-        attach_wagon
-      when commands.index('Отцепить_вагон')
-        detach_wagon
-      when commands.index('Вперед_по_маршруту')
-        forward_on_route
-      when commands.index('Назад_по_маршруту')
-        back_on_route
+    menu_with_exit(commands) do |all_commands, current_command|
+      case current_command
+      when all_commands.index('Создать_поезд') then create_train
+      when all_commands.index('Добавить_вагон') then attach_wagon
+      when all_commands.index('Отцепить_вагон') then detach_wagon
+      when all_commands.index('Назначить_маршрут') then assign_route
+      when all_commands.index('Вперед_по_маршруту') then forward_on_route
+      when all_commands.index('Назад_по_маршруту') then back_on_route
       end
     end
   end
@@ -259,50 +250,25 @@ class Controller
       Выход Создать_станцию Создать_маршрут Добавить_станцию Удалить_станцию
       Просмотреть_лист_маршрута Информация_о_станции
     ]
-    puts 'Выбирете команду'
-    loop do
-      commands.each_with_index do |cmd, key|
-        puts "#{key}: #{cmd}"
-      end
-      command = gets.chomp.to_i
-      puts commands[command].to_s
-      case command
-      when commands.index('Выход')
-        break
-      when commands.index('Создать_станцию')
-        create_station
-      when commands.index('Создать_маршрут')
-        create_route
-      when commands.index('Добавить_станцию')
-        add_station
-      when commands.index('Удалить_станцию')
-        delete_station
-      when commands.index('Просмотреть_лист_маршрута')
-        view_route_sheet
-      when commands.index('Информация_о_станции')
-        stations_info
+    menu_with_exit(commands) do |all_commands, current_command|
+      case current_command
+      when all_commands.index('Создать_станцию') then create_station
+      when all_commands.index('Создать_маршрут') then create_route
+      when all_commands.index('Добавить_станцию') then add_station
+      when all_commands.index('Удалить_станцию') then delete_station
+      when all_commands.index('Просмотреть_лист_маршрута') then view_route_sheet
+      when all_commands.index('Информация_о_станции') then stations_info
       end
     end
   end
 
   def start
     commands = %w[Выход Вагон Поезд Маршрут]
-    puts 'Выбирете команду'
-    loop do
-      commands.each_with_index do |cmd, key|
-        puts "#{key}: #{cmd}"
-      end
-      command = gets.chomp.to_i
-      puts commands[command].to_s
-      case command
-      when commands.index('Выход')
-        break
-      when commands.index('Вагон')
-        menu_wagon
-      when commands.index('Поезд')
-        menu_train
-      when commands.index('Маршрут')
-        menu_route
+    menu_with_exit(commands) do |all_commands, current_command|
+      case current_command
+      when all_commands.index('Вагон') then menu_wagon
+      when all_commands.index('Поезд') then menu_train
+      when all_commands.index('Маршрут') then menu_route
       end
     end
   end

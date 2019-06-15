@@ -33,7 +33,7 @@ class Station
 
   private
 
-  # Методы вызываются только из данного класса
+  # Methods are called only from this class
 
   def add_train(train)
     trains << train
