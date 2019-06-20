@@ -1,17 +1,21 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
-require_relative 'valid'
+require_relative 'validation'
 
 class Train
   include Manufacturer
   include InstanceCounter
-  include Valid
+  extend Validation
 
   @@trains = {}
 
   attr_accessor :speed, :wagons, :number, :route
 
   NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i.freeze
+
+  validate :route, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :type, :type, "passenger"
 
   def self.find(number)
     @@trains[number]
@@ -21,7 +25,7 @@ class Train
     @number = number
     @wagons = []
     @speed = 0
-    validate!
+    #validate!
     @@trains[@number] = self
     register_instance
   end
@@ -71,7 +75,7 @@ class Train
     self.speed = 0 unless speed.zero?
   end
 
-  def validate!
-    raise if number !~ NUMBER_FORMAT
-  end
+ #def validate!
+  #raise if number !~ NUMBER_FORMAT
+ #end
 end
