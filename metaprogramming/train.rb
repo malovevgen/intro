@@ -1,6 +1,7 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 require_relative 'validation'
+require_relative 'accessor'
 
 class Train
   include Manufacturer
