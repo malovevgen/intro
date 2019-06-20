@@ -7,6 +7,7 @@ class Train
   include Manufacturer
   include InstanceCounter
   extend Validation
+  extend Accessors
 
   @@trains = {}
 
