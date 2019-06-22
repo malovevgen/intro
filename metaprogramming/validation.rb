@@ -1,31 +1,40 @@
+require_relative 'validation/validator'
+require_relative 'validation/presence_validator'
+require_relative 'validation/format_validator'
+require_relative 'validation/type_validator'
 module Validation
-  def validate attribute_name, validator, *options
-    @@validators ||= []
-    @@validators << { attribute_name: attribute_name, validator: validator, options: options }
+  def self.inluded(base)
+    base.extend ClassMethods
+    base.send :include, InstanseMethods
+  end
 
-    define_method :validate! do
-      errors = validate
+  module ClassMethods
+    def validate(attribute_name, validator_name, *options)
+      validator_class_name = "#{validator_name.to_s.capitalize}Validator"
+      validator_class = Validation.const_get(validator_class_name)
+      validator = validator_class.new(attribute_name, options)
+
+      @@validators ||= []
+      @@validators << validator
+    end
+  end
+
+  module InstanceMethods
+    attr_accessor :errors
+
+    def validate!
+      validate
       raise errors.first unless errors.empty?
     end
 
-    define_method :valid? do
-      errors = validate
+    def valid?
+      validate
       errors.empty?
     end
 
-    define_method :validate do
+    def validate
       errors = []
-      @@validators.each do |validator|
-        value = send(validator[:attribute_name])
-        case validator[:validator]
-        when :presence
-          errors << "#{validator[:attribute_name]} must be present" if value.nil?
-        when :format
-          errors << "#{validator[:attribute_name]} have wrong format" unless value =~ validator[:options][0]
-        when :type
-          errors << "#{validator[:attribute_name]} have wrong type" unless value.is_a? validator[:options][0]
-        end
-      end
+      @@validators.each { |v| v.validate(self) }
       errors
     end
   end
