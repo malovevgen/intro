@@ -1,4 +1,8 @@
 class PassengerTrain < Train
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :number, :type, String
+
   def type
     @type = 'passenger'
   end

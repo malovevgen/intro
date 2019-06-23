@@ -1,8 +1,8 @@
 module Validation
   class Validator
-    def initialize(attribute_name, *options)
+    def initialize(attribute_name, options)
       @attribute_name = attribute_name
-      @options = options if options
+      @options = options
     end
   end
 end

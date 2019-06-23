@@ -11,13 +11,14 @@ class Train
 
   @@trains = {}
 
-  attr_accessor :speed, :wagons, :number, :route
+  attr_accessor :wagons, :number, :route
+  attr_accessor_with_history :speed
 
   NUMBER_FORMAT = /^[\d\w]{3}-?[\d\w]{2}$/i.freeze
 
   validate :number, :presence
   validate :number, :format, NUMBER_FORMAT
-  validate :number, :type, Integer
+  validate :number, :type, String
 
   def self.find(number)
     @@trains[number]
@@ -26,7 +27,7 @@ class Train
   def initialize(number)
     @number = number
     @wagons = []
-    @speed = 0
+    self.speed = 0
     validate!
     @@trains[@number] = self
     register_instance

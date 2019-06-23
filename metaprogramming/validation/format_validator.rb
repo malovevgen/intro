@@ -6,7 +6,7 @@ module Validation
       object.errors ||= []
       return if value =~ expected_format
 
-      error = [@attribute_name, "must be in format #{expected_format}"]
+      error = "#{@attribute_name} must be in format #{expected_format}"
       object.errors << error
     end
   end

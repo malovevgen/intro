@@ -111,8 +111,8 @@ class Controller
     train = Object.const_get("#{type.capitalize}Train").new(number)
     @trains << train
     puts "Поезд #{number}-#{type} создан"
-  rescue StandardError
-    puts 'Неправильный формат номера'
+  rescue StandardError => e
+    puts e.message
     retry
   end
 
